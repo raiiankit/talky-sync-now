@@ -8,13 +8,17 @@ const server = http.createServer(app);
 
 const io = socketIo(server, {
   cors: {
-    origin: "https://talk-sync.netlify.app/", // Your React app URL
+    origin: "https://talk-sync.netlify.app", // Your React app URL
     methods: ["GET", "POST"],
     credentials: true
   }
 });
 
-app.use(cors());
+app.use(cors({
+  origin: "https://talk-sync.netlify.app",
+  methods: ["GET", "POST"],
+  credentials: true
+}));
 app.use(express.json());
 
 let messages = [];
