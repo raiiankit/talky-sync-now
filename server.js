@@ -8,7 +8,7 @@ const server = http.createServer(app);
 
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:8081", // Your React app URL
+    origin: "https://talk-sync.netlify.app/", // Your React app URL
     methods: ["GET", "POST"],
     credentials: true
   }
