@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { ChatHeader } from './ChatHeader';
@@ -11,7 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 interface Message {
   id: string;
   username: string;
-  text: string;
+  text?: string;
+  image?: string;
   timestamp: Date;
 }
 
@@ -141,14 +141,12 @@ export const ChatRoom = ({ username, onLeave }: ChatRoomProps) => {
     if (text.trim()) {
       if (socket && isConnected) {
         console.log('Sending message via socket:', text);
-        // Send to server
         socket.emit('message', {
           username,
           text: text.trim()
         });
       } else {
         console.log('Sending message in demo mode:', text);
-        // Demo mode - add message locally
         const message: Message = {
           id: Date.now().toString(),
           username,
@@ -157,6 +155,29 @@ export const ChatRoom = ({ username, onLeave }: ChatRoomProps) => {
         };
         setMessages(prev => [...prev, message]);
       }
+    }
+  };
+
+  const sendMedia = async (file: File, preview: string) => {
+    if (socket && isConnected) {
+      console.log('Sending media via socket:', file.name);
+      // In a real app, you'd upload to a file storage service first
+      // For demo, we'll just use the preview
+      socket.emit('message', {
+        username,
+        image: preview,
+        text: `📷 ${file.name}`
+      });
+    } else {
+      console.log('Sending media in demo mode:', file.name);
+      const message: Message = {
+        id: Date.now().toString(),
+        username,
+        image: preview,
+        text: `📷 ${file.name}`,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, message]);
     }
   };
 
@@ -197,7 +218,8 @@ export const ChatRoom = ({ username, onLeave }: ChatRoomProps) => {
           <MessageList messages={messages} currentUser={username} />
           <TypingIndicator typingUsers={typingUsers.filter(user => user !== username)} />
           <MessageInput 
-            onSendMessage={sendMessage} 
+            onSendMessage={sendMessage}
+            onSendMedia={sendMedia}
             onTyping={handleTyping}
             isConnected={isConnected}
           />
