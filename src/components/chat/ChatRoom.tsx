@@ -33,7 +33,7 @@ export const ChatRoom = ({ username, onLeave }: ChatRoomProps) => {
     console.log('Attempting to connect to Socket.IO server...');
     
     // Connect to Socket.IO server
-    const newSocket = io('http://localhost:3001', {
+    const newSocket = io('https://talky-sync.onrender.com', {
       timeout: 5000,
       forceNew: true
     });
